@@ -59,7 +59,7 @@ If you use `build.sh` to build the projects,
 
 * To run the web application, go to the `cli` folder and run
 
-`pr-rs --http`
+`lpr-rs --http`
 
 
 The app will be accessible at `http://localhost:3030/`
