@@ -1,0 +1,48 @@
+.testClass {
+  background-color: orange;
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+
+.large_table {
+  width: 100%;
+}
+
+.colorRowG {
+  color: green
+}
+
+.colorRowB {
+  color: blue
+}
+
+.amountPlus {
+  color: green;
+  font-weight: bold;
+  text-align: right;
+  font-size: 20px;
+}
+
+.amountMinus {
+  color: red;
+  font-weight: bold;
+  text-align: right;
+  font-size: 20px;
+
+}
+
+.month {
+  background-color: yellow;
+}
+
+.statContainer {
+  width:25%;
+  padding: 25px 50px 75px 100px;
+}
+
+.statContainerRoot {
+  flex-wrap: wrap;
+  display: flex;
+}
