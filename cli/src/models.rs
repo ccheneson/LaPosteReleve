@@ -26,7 +26,7 @@ pub struct BankingStatement {
     pub activities: HashSet<AccountActivity>,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug)]
 pub struct StatsAmountPerMonthByTag {
     pub amount: OrderedFloat<f64>,
     pub month: u8
@@ -35,7 +35,7 @@ pub struct StatsAmountPerMonthByTag {
 pub mod tagging {
     use serde::Serialize;
 
-    #[derive(PartialEq, Serialize)]
+    #[derive(PartialEq, Serialize, Debug)]
     pub struct TagsPattern {
         pub id: u8,
         pub pattern: String,

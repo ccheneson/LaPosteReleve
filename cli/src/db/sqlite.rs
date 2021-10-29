@@ -14,6 +14,11 @@ impl SqliteDB {
     pub fn new(conn: Connection) -> Self {        
         Self { conn }
     }
+
+    #[allow(unused)]
+    pub fn close_cnx(self) -> anyhow::Result<()> {
+        self.conn.close().map_err(|err| anyhow::anyhow!(err.1))
+    }
 }
 
 impl DBActions for SqliteDB {
@@ -238,80 +243,121 @@ impl DBActions for SqliteDB {
 }
 
 
-#[test]
-fn test() -> anyhow::Result<()> {
-    
+
+#[cfg(test)]
+mod tests {
+
+    use crate::{db::{DBActions, sqlite::SqliteDB}, models::{AccountActivity, AccountBalance, tagging::TagsPattern}};
     use ordered_float::OrderedFloat;
     use chrono::NaiveDate;
     use crate::db::tests::sqlite_connections::in_memory;
 
+    fn create_db() -> anyhow::Result<SqliteDB> {
+        let connection = in_memory()?;
+        Ok(SqliteDB { conn : connection })
+    }
 
-    let connection = in_memory()?;
-    let mut db = SqliteDB { conn : connection };
+    #[test]
+    fn test_balance() -> anyhow::Result<()> {
 
-    db.create_table()?;
+        let db = create_db()?;
+        db.create_table()?;
 
-    let balance = AccountBalance {
-        row_id: None,
-        balance_euro: OrderedFloat(132.23),
-        date : NaiveDate::from_ymd(2021, 11, 12)
-    };
+        let balance = AccountBalance {
+            row_id: None,
+            balance_euro: OrderedFloat(132.23),
+            date : NaiveDate::from_ymd(2021, 11, 12)
+        };
+        db.insert_balance(balance)?;
 
-    let mut activities = vec!();
-    activities.push(AccountActivity {
-        row_id: None,
-        date: NaiveDate::from_ymd(2021, 11, 01),
-        statement: "I BOUGHT THIS".to_string(),
-        amount: OrderedFloat(102.32),
-        tag_pattern_id: None
-    });
-    activities.push(AccountActivity {
-        row_id: None,
-        date: NaiveDate::from_ymd(2021, 11, 02),
-        statement: "I BOUGHT THAT".to_string(),
-        amount: OrderedFloat(15.68),
-        tag_pattern_id: None
-    });
-    activities.push(AccountActivity {
-        row_id: None,
-        date: NaiveDate::from_ymd(2021, 11, 02),
-        statement: "I BOUGHT THAT".to_string(),
-        amount: OrderedFloat(15.68),
-        tag_pattern_id: None
-    });
-
-    db.insert_activities(&activities)?;
-    db.insert_balance(balance)?;
-    let tags_pattern = db.get_tag_patterns()?;
-
-    let test_activity: f64 = db.conn
-        .query_row(
-            "SELECT amount FROM activities WHERE statement = ?1 ", 
-            [ "I BOUGHT THAT" ],
-            |row| row.get(0)
-        )?;
-
-    let test_activity_count: usize = db.conn
-        .query_row(
-            "SELECT COUNT(*) FROM activities", 
-            [],
-            |row| row.get(0)
-        )?;
-
-    let test_balance: f64 = db.conn
+           
+        let test_balance: f64 = db.conn
         .query_row(
             "SELECT amount FROM balance", 
             [],
             |row| row.get(0)
         )?;
 
-    assert_eq!(test_activity, 15.68, "Wrong amount found in activities");
-    assert_eq!(test_balance, 132.23, "Wrong amount found in balance");
-    //The above should be 2 because of duplicates not inserted
-    assert_eq!(test_activity_count, 2, "Wrong number of activities (count)");
+        assert_eq!(test_balance, 132.23, "Wrong amount found in balance");
 
-    assert!(tags_pattern.contains(&TagsPattern { id : 8, pattern : "FREE MOBILE".to_string(), tag: "FREEMOBILE".to_string()}), "Tag Pattern not found");
+        db.close_cnx()?;
 
-    Ok(())
+        Ok(())
+    }
 
+    #[test]
+    fn test_activity() -> anyhow::Result<()> {
+
+        let mut db = create_db()?;
+        db.create_table()?;
+
+
+        let mut activities = vec!();
+        activities.push(AccountActivity {
+            row_id: None,
+            date: NaiveDate::from_ymd(2021, 11, 01),
+            statement: "I BOUGHT THIS".to_string(),
+            amount: OrderedFloat(102.32),
+            tag_pattern_id: None
+        });
+        activities.push(AccountActivity {
+            row_id: None,
+            date: NaiveDate::from_ymd(2021, 11, 02),
+            statement: "I BOUGHT THAT with 'VIREMENT'".to_string(),
+            amount: OrderedFloat(15.68),
+            tag_pattern_id: None
+        });
+        activities.push(AccountActivity {
+            row_id: None,
+            date: NaiveDate::from_ymd(2021, 11, 02),
+            statement: "I BOUGHT THAT with 'VIREMENT'".to_string(),
+            amount: OrderedFloat(15.68),
+            tag_pattern_id: None
+        });
+
+        db.insert_activities(&activities)?;
+        
+        
+        let test_activity: f64 = db.conn
+            .query_row(
+                "SELECT amount FROM activities WHERE statement LIKE ?1 ", 
+                [ "%I BOUGHT THAT%" ],
+                |row| row.get(0)
+            )?;
+
+        let test_activity_count: usize = db.conn
+            .query_row(
+                "SELECT COUNT(*) FROM activities", 
+                [],
+                |row| row.get(0)
+            )?;
+
+        assert_eq!(test_activity, 15.68, "Wrong amount found in activities");
+        assert_eq!(test_activity_count, 2, "Wrong number of activities (count)");
+        
+        db.close_cnx()?;
+
+        Ok(())
+    }
+
+    #[test]
+    fn test_tags_pattern() -> anyhow::Result<()> {
+
+        let db = create_db()?;
+        db.create_table()?;
+   
+        let tags_pattern = db.get_tag_patterns()?;
+
+        assert!(
+            tags_pattern.contains(&TagsPattern { id : 5, pattern : "FREE MOBILE".to_string(), tag: "FREEMOBILE".to_string()}), 
+            "Tag Pattern not found"
+        );
+
+        db.close_cnx()?;
+
+        Ok(())
+
+    }
+
+  
 }
