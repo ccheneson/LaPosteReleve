@@ -29,7 +29,7 @@ const TagPatternList = () => {
                         <th>tag</th>
                     </tr>
                     { tagPatterns.map(tp => 
-                        <tr>
+                        <tr key={tp.pattern}>
                             
                             <td>{ tp.pattern }</td>
                             <td>{ tp.tags.join(", ")}</td>

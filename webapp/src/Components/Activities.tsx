@@ -91,7 +91,9 @@ const Activities = () => {
     const updateSearchResult = (activitiesJson: ActivitiesPerMonthJson[]) => (e: React.FormEvent<HTMLInputElement>) => {
         const searchPattern = e.currentTarget.value.toLowerCase();
         const checkPatternInTags = (tagPatternId: number|null, searchPattern: string) => {
-            if (tagPatternId == null) {
+            if (tagPatternId == null && searchPattern == "null") {
+                return true;
+            } else if (tagPatternId == null) {
                 return false;
             } else if (tags && tagPatternId in tags) {
                 return tags[tagPatternId].filter(e => e.toString().toLowerCase().includes(searchPattern)).length > 0;

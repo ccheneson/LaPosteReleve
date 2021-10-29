@@ -9,7 +9,7 @@ const Search = (props: SearchProps) => {
 
     return(
         <div>
-            Search: <input type="text" onChange={props.onChange}/>
+            Search: <input type="text" onChange={props.onChange}/> ("null" for untagged activities)
         </div>
     )
 }

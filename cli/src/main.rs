@@ -17,6 +17,7 @@ struct AppConfig {
     db_path: String,
     csv_source: String,
     root_www: String,
+    port_www: u16
 }
 
 #[tokio::main]
@@ -37,7 +38,7 @@ async fn main() -> anyhow::Result<()> {
         Some("--http") => {
             let conn = sqlite_connections::from_file(db_path)?;
             let arc_db = arc_db(conn);
-            http_server(cfg.root_www, arc_db).await
+            http_server(cfg.root_www, cfg.port_www, arc_db).await
         },
         Some("--db")   => {
             remove_db_if_exist(db_path)?;
