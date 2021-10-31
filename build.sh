@@ -16,6 +16,7 @@ cd $PROJECT_DIR
 
 #in cli
 cargo build --manifest-path=cli/Cargo.toml --release && cp cli/target/release/la-poste-releve-cli ./dist/lpr-rs
-cp -dpr cli/data/*.csv $PROJECT_DIR/dist
+mkdir -p $PROJECT_DIR/dist/data/
+cp -dpr cli/data/*.csv $PROJECT_DIR/dist/data/
 cp cli/config.toml $PROJECT_DIR/dist/config.toml
 cp cli/init-db.toml $PROJECT_DIR/dist/init-db.toml
