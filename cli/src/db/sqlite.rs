@@ -269,7 +269,7 @@ mod tests {
 
     fn create_db() -> anyhow::Result<SqliteDB> {
         let connection = in_memory()?;
-        Ok(SqliteDB { conn : connection, init_db_path : Some("./init-db.toml".to_string()) })
+        Ok(SqliteDB { conn : connection, init_db_path : Some("./data/init-db-test.toml".to_string()) })
     }
 
     #[test]
