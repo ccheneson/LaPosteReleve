@@ -2,3 +2,4 @@ db_path = "./laposte.db"
 csv_source = "./data/"
 root_www = "./www/"
 port_www = 3030
+init_db_path = "./init-db.toml"

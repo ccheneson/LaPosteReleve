@@ -35,7 +35,7 @@ fn test() -> anyhow::Result<()> {
     use crate::db::sqlite::SqliteDB;
 
     let conn = in_memory()?;
-    let sqlite_db = SqliteDB::new(conn);
+    let sqlite_db = SqliteDB::new(conn, Some("./init-db.toml".to_string()));
 
     let arc_db = Arc::new(Mutex::new(sqlite_db));
     csv2db("./data/", arc_db.clone())?;

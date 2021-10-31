@@ -1,0 +1,1196 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ActivitiesTable should match the snapshot 1`] = `
+Object {
+  "asFragment": [Function],
+  "baseElement": <body>
+    <div>
+      <div>
+        <div>
+          <div>
+            Search: 
+            <input
+              type="text"
+            />
+             ("null" for untagged activities)
+          </div>
+          <br />
+          <table
+            class="large_table"
+            id="account"
+          >
+            <tbody>
+              <tr>
+                <th>
+                  Month
+                </th>
+                <th>
+                  Date
+                </th>
+                <th>
+                  Libelle
+                </th>
+                <th>
+                  Tags
+                </th>
+                <th>
+                  Montant 
+                  au 28/07/2021
+                  <br />
+                  132.85 €
+                </th>
+              </tr>
+              <tr
+                class="colorRowG"
+              >
+                <td
+                  class="month"
+                >
+                  July
+                  <br />
+                  +0.00
+                  <br />
+                  -73.00
+                </td>
+                <td>
+                  26/07/2021
+                </td>
+                <td>
+                  BUY SOMETHING FREE MOBILE 01
+                </td>
+                <td>
+                  FREEMOBILE, PARIS
+                </td>
+                <td
+                  class="amountMinus"
+                >
+                  -30.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowB"
+              >
+                <td />
+                <td>
+                  16/07/2021
+                </td>
+                <td>
+                  BUY SOMETHING 02
+                </td>
+                <td />
+                <td
+                  class="amountMinus"
+                >
+                  -21.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowG"
+              >
+                <td />
+                <td>
+                  12/07/2021
+                </td>
+                <td>
+                  BUY SOMETHING 03
+                </td>
+                <td />
+                <td
+                  class="amountMinus"
+                >
+                  -22.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowB"
+              >
+                <td
+                  class="month"
+                >
+                  June
+                  <br />
+                  +0.00
+                  <br />
+                  -122.00
+                </td>
+                <td>
+                  09/06/2021
+                </td>
+                <td>
+                  BUY SOMETHING EDF 04
+                </td>
+                <td>
+                  EDF
+                </td>
+                <td
+                  class="amountMinus"
+                >
+                  -22.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowB"
+              >
+                <td />
+                <td>
+                  09/06/2021
+                </td>
+                <td>
+                  BUY SOMETHING 04
+                </td>
+                <td />
+                <td
+                  class="amountMinus"
+                >
+                  -64.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowB"
+              >
+                <td />
+                <td>
+                  09/06/2021
+                </td>
+                <td>
+                  BUY RETRAIT 04
+                </td>
+                <td>
+                  RETRAIT
+                </td>
+                <td
+                  class="amountMinus"
+                >
+                  -36.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowG"
+              >
+                <td
+                  class="month"
+                >
+                  May
+                  <br />
+                  +0.00
+                  <br />
+                  -216.00
+                </td>
+                <td>
+                  26/05/2021
+                </td>
+                <td>
+                  BUY SOMETHING 01
+                </td>
+                <td />
+                <td
+                  class="amountMinus"
+                >
+                  -54.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowB"
+              >
+                <td />
+                <td>
+                  12/05/2021
+                </td>
+                <td>
+                  BUY SOMETHING 03
+                </td>
+                <td />
+                <td
+                  class="amountMinus"
+                >
+                  -20.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowG"
+              >
+                <td />
+                <td>
+                  10/05/2021
+                </td>
+                <td>
+                  BUY SOMETHING 02
+                </td>
+                <td />
+                <td
+                  class="amountMinus"
+                >
+                  -45.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowB"
+              >
+                <td />
+                <td>
+                  09/05/2021
+                </td>
+                <td>
+                  BUY SOMETHING VIREMENT
+                </td>
+                <td>
+                  VIREMENT_BANCAIRE
+                </td>
+                <td
+                  class="amountMinus"
+                >
+                  -10.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowB"
+              >
+                <td />
+                <td>
+                  09/05/2021
+                </td>
+                <td>
+                  BUY SOMETHING 07
+                </td>
+                <td />
+                <td
+                  class="amountMinus"
+                >
+                  -44.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowB"
+              >
+                <td />
+                <td>
+                  09/05/2021
+                </td>
+                <td>
+                  BUY RETRAIT 05
+                </td>
+                <td>
+                  RETRAIT
+                </td>
+                <td
+                  class="amountMinus"
+                >
+                  -11.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowG"
+              >
+                <td />
+                <td>
+                  08/05/2021
+                </td>
+                <td>
+                  BUY SOMETHING 06
+                </td>
+                <td />
+                <td
+                  class="amountMinus"
+                >
+                  -32.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowB"
+              >
+                <td
+                  class="month"
+                >
+                  April
+                  <br />
+                  +0.00
+                  <br />
+                  -367.00
+                </td>
+                <td>
+                  09/04/2021
+                </td>
+                <td>
+                  BUY SOMETHING LOYER 05
+                </td>
+                <td>
+                  LOYER, PARIS
+                </td>
+                <td
+                  class="amountMinus"
+                >
+                  -300.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowB"
+              >
+                <td />
+                <td>
+                  09/04/2021
+                </td>
+                <td>
+                  BUY SOMETHING EDF 04
+                </td>
+                <td>
+                  EDF
+                </td>
+                <td
+                  class="amountMinus"
+                >
+                  -11.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowB"
+              >
+                <td />
+                <td>
+                  09/04/2021
+                </td>
+                <td>
+                  BUY SOMETHING 04
+                </td>
+                <td />
+                <td
+                  class="amountMinus"
+                >
+                  -56.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowG"
+              >
+                <td
+                  class="month"
+                >
+                  March
+                  <br />
+                  +0.00
+                  <br />
+                  -68.00
+                </td>
+                <td>
+                  26/03/2021
+                </td>
+                <td>
+                  BUY SOMETHING FREE MOBILE 01
+                </td>
+                <td>
+                  FREEMOBILE, PARIS
+                </td>
+                <td
+                  class="amountMinus"
+                >
+                  -20.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowB"
+              >
+                <td />
+                <td>
+                  16/03/2021
+                </td>
+                <td>
+                  BUY SOMETHING 02
+                </td>
+                <td />
+                <td
+                  class="amountMinus"
+                >
+                  -10.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowG"
+              >
+                <td />
+                <td>
+                  12/03/2021
+                </td>
+                <td>
+                  BUY SOMETHING 03
+                </td>
+                <td />
+                <td
+                  class="amountMinus"
+                >
+                  -15.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowB"
+              >
+                <td />
+                <td>
+                  09/03/2021
+                </td>
+                <td>
+                  BUY SOMETHING 07
+                </td>
+                <td />
+                <td
+                  class="amountMinus"
+                >
+                  -5.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowB"
+              >
+                <td />
+                <td>
+                  09/03/2021
+                </td>
+                <td>
+                  BUY SOMETHING 04
+                </td>
+                <td />
+                <td
+                  class="amountMinus"
+                >
+                  -8.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowG"
+              >
+                <td />
+                <td>
+                  08/03/2021
+                </td>
+                <td>
+                  BUY SOMETHING 06
+                </td>
+                <td />
+                <td
+                  class="amountMinus"
+                >
+                  -10.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowB"
+              >
+                <td
+                  class="month"
+                >
+                  February
+                  <br />
+                  +0.00
+                  <br />
+                  -489.53
+                </td>
+                <td>
+                  09/02/2021
+                </td>
+                <td>
+                  BUY SOMETHING LOYER 05
+                </td>
+                <td>
+                  LOYER, PARIS
+                </td>
+                <td
+                  class="amountMinus"
+                >
+                  -300.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowB"
+              >
+                <td />
+                <td>
+                  09/02/2021
+                </td>
+                <td>
+                  BUY SOMETHING EDF 04
+                </td>
+                <td>
+                  EDF
+                </td>
+                <td
+                  class="amountMinus"
+                >
+                  -41.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowB"
+              >
+                <td />
+                <td>
+                  09/02/2021
+                </td>
+                <td>
+                  BUY SOMETHING 07
+                </td>
+                <td />
+                <td
+                  class="amountMinus"
+                >
+                  -52.53
+                </td>
+              </tr>
+              <tr
+                class="colorRowG"
+              >
+                <td />
+                <td>
+                  08/02/2021
+                </td>
+                <td>
+                  BUY SOMETHING 06
+                </td>
+                <td />
+                <td
+                  class="amountMinus"
+                >
+                  -44.00
+                </td>
+              </tr>
+              <tr
+                class="colorRowB"
+              >
+                <td />
+                <td>
+                  07/02/2021
+                </td>
+                <td>
+                  BUY SOMETHING 04
+                </td>
+                <td />
+                <td
+                  class="amountMinus"
+                >
+                  -52.00
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div>
+      <div>
+        <div>
+          Search: 
+          <input
+            type="text"
+          />
+           ("null" for untagged activities)
+        </div>
+        <br />
+        <table
+          class="large_table"
+          id="account"
+        >
+          <tbody>
+            <tr>
+              <th>
+                Month
+              </th>
+              <th>
+                Date
+              </th>
+              <th>
+                Libelle
+              </th>
+              <th>
+                Tags
+              </th>
+              <th>
+                Montant 
+                au 28/07/2021
+                <br />
+                132.85 €
+              </th>
+            </tr>
+            <tr
+              class="colorRowG"
+            >
+              <td
+                class="month"
+              >
+                July
+                <br />
+                +0.00
+                <br />
+                -73.00
+              </td>
+              <td>
+                26/07/2021
+              </td>
+              <td>
+                BUY SOMETHING FREE MOBILE 01
+              </td>
+              <td>
+                FREEMOBILE, PARIS
+              </td>
+              <td
+                class="amountMinus"
+              >
+                -30.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowB"
+            >
+              <td />
+              <td>
+                16/07/2021
+              </td>
+              <td>
+                BUY SOMETHING 02
+              </td>
+              <td />
+              <td
+                class="amountMinus"
+              >
+                -21.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowG"
+            >
+              <td />
+              <td>
+                12/07/2021
+              </td>
+              <td>
+                BUY SOMETHING 03
+              </td>
+              <td />
+              <td
+                class="amountMinus"
+              >
+                -22.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowB"
+            >
+              <td
+                class="month"
+              >
+                June
+                <br />
+                +0.00
+                <br />
+                -122.00
+              </td>
+              <td>
+                09/06/2021
+              </td>
+              <td>
+                BUY SOMETHING EDF 04
+              </td>
+              <td>
+                EDF
+              </td>
+              <td
+                class="amountMinus"
+              >
+                -22.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowB"
+            >
+              <td />
+              <td>
+                09/06/2021
+              </td>
+              <td>
+                BUY SOMETHING 04
+              </td>
+              <td />
+              <td
+                class="amountMinus"
+              >
+                -64.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowB"
+            >
+              <td />
+              <td>
+                09/06/2021
+              </td>
+              <td>
+                BUY RETRAIT 04
+              </td>
+              <td>
+                RETRAIT
+              </td>
+              <td
+                class="amountMinus"
+              >
+                -36.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowG"
+            >
+              <td
+                class="month"
+              >
+                May
+                <br />
+                +0.00
+                <br />
+                -216.00
+              </td>
+              <td>
+                26/05/2021
+              </td>
+              <td>
+                BUY SOMETHING 01
+              </td>
+              <td />
+              <td
+                class="amountMinus"
+              >
+                -54.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowB"
+            >
+              <td />
+              <td>
+                12/05/2021
+              </td>
+              <td>
+                BUY SOMETHING 03
+              </td>
+              <td />
+              <td
+                class="amountMinus"
+              >
+                -20.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowG"
+            >
+              <td />
+              <td>
+                10/05/2021
+              </td>
+              <td>
+                BUY SOMETHING 02
+              </td>
+              <td />
+              <td
+                class="amountMinus"
+              >
+                -45.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowB"
+            >
+              <td />
+              <td>
+                09/05/2021
+              </td>
+              <td>
+                BUY SOMETHING VIREMENT
+              </td>
+              <td>
+                VIREMENT_BANCAIRE
+              </td>
+              <td
+                class="amountMinus"
+              >
+                -10.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowB"
+            >
+              <td />
+              <td>
+                09/05/2021
+              </td>
+              <td>
+                BUY SOMETHING 07
+              </td>
+              <td />
+              <td
+                class="amountMinus"
+              >
+                -44.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowB"
+            >
+              <td />
+              <td>
+                09/05/2021
+              </td>
+              <td>
+                BUY RETRAIT 05
+              </td>
+              <td>
+                RETRAIT
+              </td>
+              <td
+                class="amountMinus"
+              >
+                -11.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowG"
+            >
+              <td />
+              <td>
+                08/05/2021
+              </td>
+              <td>
+                BUY SOMETHING 06
+              </td>
+              <td />
+              <td
+                class="amountMinus"
+              >
+                -32.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowB"
+            >
+              <td
+                class="month"
+              >
+                April
+                <br />
+                +0.00
+                <br />
+                -367.00
+              </td>
+              <td>
+                09/04/2021
+              </td>
+              <td>
+                BUY SOMETHING LOYER 05
+              </td>
+              <td>
+                LOYER, PARIS
+              </td>
+              <td
+                class="amountMinus"
+              >
+                -300.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowB"
+            >
+              <td />
+              <td>
+                09/04/2021
+              </td>
+              <td>
+                BUY SOMETHING EDF 04
+              </td>
+              <td>
+                EDF
+              </td>
+              <td
+                class="amountMinus"
+              >
+                -11.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowB"
+            >
+              <td />
+              <td>
+                09/04/2021
+              </td>
+              <td>
+                BUY SOMETHING 04
+              </td>
+              <td />
+              <td
+                class="amountMinus"
+              >
+                -56.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowG"
+            >
+              <td
+                class="month"
+              >
+                March
+                <br />
+                +0.00
+                <br />
+                -68.00
+              </td>
+              <td>
+                26/03/2021
+              </td>
+              <td>
+                BUY SOMETHING FREE MOBILE 01
+              </td>
+              <td>
+                FREEMOBILE, PARIS
+              </td>
+              <td
+                class="amountMinus"
+              >
+                -20.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowB"
+            >
+              <td />
+              <td>
+                16/03/2021
+              </td>
+              <td>
+                BUY SOMETHING 02
+              </td>
+              <td />
+              <td
+                class="amountMinus"
+              >
+                -10.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowG"
+            >
+              <td />
+              <td>
+                12/03/2021
+              </td>
+              <td>
+                BUY SOMETHING 03
+              </td>
+              <td />
+              <td
+                class="amountMinus"
+              >
+                -15.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowB"
+            >
+              <td />
+              <td>
+                09/03/2021
+              </td>
+              <td>
+                BUY SOMETHING 07
+              </td>
+              <td />
+              <td
+                class="amountMinus"
+              >
+                -5.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowB"
+            >
+              <td />
+              <td>
+                09/03/2021
+              </td>
+              <td>
+                BUY SOMETHING 04
+              </td>
+              <td />
+              <td
+                class="amountMinus"
+              >
+                -8.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowG"
+            >
+              <td />
+              <td>
+                08/03/2021
+              </td>
+              <td>
+                BUY SOMETHING 06
+              </td>
+              <td />
+              <td
+                class="amountMinus"
+              >
+                -10.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowB"
+            >
+              <td
+                class="month"
+              >
+                February
+                <br />
+                +0.00
+                <br />
+                -489.53
+              </td>
+              <td>
+                09/02/2021
+              </td>
+              <td>
+                BUY SOMETHING LOYER 05
+              </td>
+              <td>
+                LOYER, PARIS
+              </td>
+              <td
+                class="amountMinus"
+              >
+                -300.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowB"
+            >
+              <td />
+              <td>
+                09/02/2021
+              </td>
+              <td>
+                BUY SOMETHING EDF 04
+              </td>
+              <td>
+                EDF
+              </td>
+              <td
+                class="amountMinus"
+              >
+                -41.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowB"
+            >
+              <td />
+              <td>
+                09/02/2021
+              </td>
+              <td>
+                BUY SOMETHING 07
+              </td>
+              <td />
+              <td
+                class="amountMinus"
+              >
+                -52.53
+              </td>
+            </tr>
+            <tr
+              class="colorRowG"
+            >
+              <td />
+              <td>
+                08/02/2021
+              </td>
+              <td>
+                BUY SOMETHING 06
+              </td>
+              <td />
+              <td
+                class="amountMinus"
+              >
+                -44.00
+              </td>
+            </tr>
+            <tr
+              class="colorRowB"
+            >
+              <td />
+              <td>
+                07/02/2021
+              </td>
+              <td>
+                BUY SOMETHING 04
+              </td>
+              <td />
+              <td
+                class="amountMinus"
+              >
+                -52.00
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
+`;

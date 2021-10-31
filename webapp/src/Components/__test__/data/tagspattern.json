@@ -1,0 +1,34 @@
+[
+  {
+    "pattern":"LOYER",
+    "tags":[
+      "LOYER",
+      "PARIS"
+    ]
+  },
+  {
+    "pattern":"RETRAIT",
+    "tags":[
+      "RETRAIT"
+    ]
+  },
+  {
+    "pattern":"EDF",
+    "tags":[
+      "EDF"
+    ]
+  },
+  {
+    "pattern":"VIREMENT",
+    "tags":[
+      "VIREMENT_BANCAIRE"
+    ]
+  },
+  {
+    "pattern":"FREE MOBILE",
+    "tags":[
+      "FREEMOBILE",
+      "PARIS"
+    ]
+  }
+]
