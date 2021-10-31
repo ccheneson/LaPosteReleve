@@ -1,6 +1,6 @@
 import { Bar } from "react-chartjs-2";
-import { monthByIndex } from "./Activities";
 import React, { useState, useEffect } from "react";
+import { monthByIndex } from "./ActivitiesTable";
 
  
 type StatsDataJson = {
@@ -14,19 +14,16 @@ type StatsJson = {
 }
 
 type StatsProps = {
-    data_source: string
+    dataJson: StatsJson
 }
 
 const BarStats = (props: StatsProps) => {
  
-    let [stats, setStats] = useState<StatsJson | undefined>(undefined)
+    const [stats, setStats] = useState<StatsJson>(undefined)
 
     useEffect(() => {
-        fetch(props.data_source, { mode: 'cors'})
-            .then(response => response.json())
-            .then(data => setStats(data))
-    }, [])
-        
+        setStats(props.dataJson)
+    })
     
     return (
         <div>

@@ -1,7 +1,7 @@
 pub mod sqlite;
 
 use std::sync::{Arc, Mutex};
-use crate::models::{AccountActivity, AccountBalance, StatsAmountPerMonthByTag, tagging::{ActivityToTags, TagsPattern}};
+use crate::models::{AccountActivity, AccountBalance, StatsAmountPerMonthByTag, StatsDetailedAmountPerMonthByTag, tagging::{ActivityToTags, TagsPattern}};
 pub type ArcMutDB<T> = Arc<Mutex<T>>;
 
 
@@ -33,6 +33,7 @@ pub trait DBActions {
     fn get_tag_patterns(&self) -> anyhow::Result<Vec<TagsPattern>>;
     fn insert_activity_tags(&mut self, activity_tags: &[ActivityToTags]) -> anyhow::Result<usize>;
     fn get_stats_tag_per_month(&self, tags: &[String]) -> anyhow::Result<Vec<StatsAmountPerMonthByTag>>;
+    fn get_stats_detailed_amount_per_month(&self, tags: &[String]) -> anyhow::Result<Vec<StatsDetailedAmountPerMonthByTag>>;
 }
 
 

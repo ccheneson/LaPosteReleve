@@ -32,6 +32,14 @@ pub struct StatsAmountPerMonthByTag {
     pub month: u8
 }
 
+#[derive(Serialize, Eq, PartialEq, Hash)]
+pub struct StatsDetailedAmountPerMonthByTag {
+    pub tag: String,
+    pub amount: OrderedFloat<f64>,
+    pub month: u32,
+    pub month_year: u32
+}
+
 pub mod tagging {
     use serde::Serialize;
 

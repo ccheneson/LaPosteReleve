@@ -1,0 +1,80 @@
+table_activities='''
+    CREATE TABLE activities (
+        date            DATE NOT NULL,
+        statement       TEXT NOT NULL,
+        amount          NUMERIC NOT NULL,
+        PRIMARY KEY ( date, statement, amount)
+    );
+'''
+
+table_balance='''
+    CREATE TABLE balance (
+        date            DATE NOT NULL,
+        amount          NUMERIC NOT NULL,
+        PRIMARY KEY ( date, amount)
+    );
+'''
+
+table_tags='''
+    CREATE TABLE tags (
+        id              INTEGER NOT NULL,
+        tag             TEXT NOT NULL
+    );
+'''
+
+table_tags_pattern='''
+    CREATE TABLE tags_pattern (
+        id              INTEGER NOT NULL,
+        tags_pattern      TEXT NOT NULL
+    );
+'''
+
+table_tags_pattern_to_tags='''
+    CREATE TABLE tags_pattern_to_tags (
+        tags_pattern_id   INTEGER NOT NULL,
+        tags_id   INTEGER NOT NULL
+    );
+'''
+
+table_activities_tags='''
+    CREATE TABLE activities_tags (
+        activity_id       INTEGER NOT NULL,
+        tags_pattern_id   INTEGER NOT NULL,
+        PRIMARY KEY ( activity_id, tags_pattern_id)                   
+    );
+'''
+
+predefined_tags='''
+    INSERT INTO tags (id, tag)
+    VALUES 
+    (1, 'EDF'),
+    (2, 'FREEMOBILE'), 
+    (3, 'LOYER'),
+    (4, 'PARIS'),                
+    (5, 'RETRAIT'),
+    (6, 'VIREMENT_BANCAIRE')
+    ;
+'''
+
+predefined_tags_pattern='''
+    INSERT INTO tags_pattern (id, tags_pattern)
+    VALUES 
+    (1, 'EDF'),                
+    (2, 'VIREMENT'),
+    (3, 'RETRAIT'),
+    (4, 'LOYER'),
+    (5, 'FREE MOBILE')
+    ;
+'''
+
+
+predefined_tags_pattern_to_tags='''
+    INSERT INTO tags_pattern_to_tags (tags_pattern_id, tags_id)
+    VALUES 
+    (1, 1),
+    (2, 6),
+    (3, 5),
+    (4, 3), (4, 4),
+    (5, 2), (5, 4)
+    ;
+'''

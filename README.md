@@ -55,11 +55,11 @@ If you use `build.sh` to build the projects,
 
 * To build the database, go to the `dist` folder and run
 
-`lpr-rs --db`
+`./lpr-rs --db`
 
-* To run the web application, go to the `cli` folder and run
+* To run the web application, go to the `dist` folder and run
 
-`lpr-rs --http`
+`./lpr-rs --http`
 
 
 The app will be accessible at `http://localhost:3030/`

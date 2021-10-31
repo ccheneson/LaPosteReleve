@@ -1,18 +1,33 @@
 use itertools::Itertools;
 use ordered_float::OrderedFloat;
 use rusqlite::{Connection, named_params,params_from_iter};
-use crate::models::{AccountActivity, AccountBalance, StatsAmountPerMonthByTag, tagging::{ActivityToTags, TagsPattern}};
-
+use crate::models::{AccountActivity, AccountBalance, StatsAmountPerMonthByTag, StatsDetailedAmountPerMonthByTag, tagging::{ActivityToTags, TagsPattern}};
+use serde::{Serialize, Deserialize};
 use super::DBActions;
 
 
 pub struct SqliteDB {
     pub conn: Connection,
+    init_db_path: Option<String>,
+}
+
+
+#[derive(Default, Debug, Serialize, Deserialize)]
+struct InitTables {
+    table_activities: String,
+    table_balance: String,
+    table_tags: String,
+    table_tags_pattern: String,
+    table_tags_pattern_to_tags: String,
+    table_activities_tags: String,
+    predefined_tags: String,
+    predefined_tags_pattern: String,
+    predefined_tags_pattern_to_tags: String
 }
 
 impl SqliteDB {
-    pub fn new(conn: Connection) -> Self {        
-        Self { conn }
+    pub fn new(conn: Connection, init_db_path: Option<String>) -> Self {        
+        Self { conn, init_db_path }
     }
 
     #[allow(unused)]
@@ -24,78 +39,36 @@ impl SqliteDB {
 impl DBActions for SqliteDB {
     
     fn create_table(&self) -> anyhow::Result<usize> {
-        self.conn.execute(
-            "CREATE TABLE activities (
-                      date            DATE NOT NULL,
-                      statement       TEXT NOT NULL,
-                      amount          NUMERIC NOT NULL,
-                      PRIMARY KEY ( date, statement, amount)
-                      );",
-            [],
-        ).and_then(|_|self.conn.execute(
-            "CREATE TABLE balance (
-                      date            DATE NOT NULL,
-                      amount          NUMERIC NOT NULL,
-                      PRIMARY KEY ( date, amount)
-                      );",
-            [],
-        )).and_then(|_|self.conn.execute(
-            "CREATE TABLE tags (
-                      id              INTEGER NOT NULL,
-                      tag             TEXT NOT NULL
-                      );",
-            [],
-        )).and_then(|_|self.conn.execute(
-            "CREATE TABLE tags_pattern (
-                      id              INTEGER NOT NULL,
-                      tags_pattern      TEXT NOT NULL
-                      );",
-            [],
-        )).and_then(|_|self.conn.execute(
-            "CREATE TABLE tags_pattern_to_tags (
-                      tags_pattern_id   INTEGER NOT NULL,
-                      tags_id   INTEGER NOT NULL
-                      );",
-            [],
-        )).and_then(|_|self.conn.execute(
-            "CREATE TABLE activities_tags (
-                      activity_id       INTEGER NOT NULL,
-                      tags_pattern_id   INTEGER NOT NULL,
-                      PRIMARY KEY ( activity_id, tags_pattern_id)                   
-                      );",
-            [],
-        )).and_then(|_|self.conn.execute(
-            "INSERT INTO tags (id, tag)
-                VALUES 
-                (1, 'EDF'),
-                (2, 'FREEMOBILE'), 
-                (3, 'LOYER'),
-                (4, 'PARIS'),                
-                (5, 'RETRAIT'),
-                (6, 'VIREMENT_BANCAIRE')
-                ;",
-            [],
-        )).and_then(|_|self.conn.execute(
-            "INSERT INTO tags_pattern (id, tags_pattern)
-                VALUES 
-                (1, 'EDF'),                
-                (2, 'VIREMENT'),
-                (3, 'RETRAIT'),
-                (4, 'LOYER'),
-                (5, 'FREE MOBILE')
-             ;",
-            [],
-        )).and_then(|_|self.conn.execute(
-            "INSERT INTO tags_pattern_to_tags (tags_pattern_id, tags_id)
-                VALUES 
-                (1, 1),
-                (2, 6),
-                (3, 5),
-                (4, 3), (4, 4),
-                (5, 2), (5, 4)
-                ;",
-            [],
-        )).map_err(|err| anyhow::anyhow!(err))
+        let init_db_script = self.init_db_path.as_ref().ok_or(anyhow::anyhow!("Missing DB int script path"))?;
+        let init_tables: InitTables = confy::load_path(init_db_script.as_str())?;
+
+        self.conn
+            .execute(init_tables.table_activities.as_str(),[],)
+            .and_then(|_|
+                self.conn.execute(init_tables.table_balance.as_str(),[],)
+            )
+            .and_then(|_|
+                self.conn.execute(init_tables.table_tags.as_str(),[],)
+            )
+            .and_then(|_|
+                self.conn.execute(init_tables.table_tags_pattern.as_str(),[],)
+            )
+            .and_then(|_|
+                self.conn.execute(init_tables.table_tags_pattern_to_tags.as_str(),[],)
+            )
+            .and_then(|_|
+                self.conn.execute(init_tables.table_activities_tags.as_str(),[],),
+            )
+            .and_then(|_|
+                self.conn.execute(init_tables.predefined_tags.as_str(),[],),
+            )
+            .and_then(|_|
+                self.conn.execute(init_tables.predefined_tags_pattern.as_str(),[],),
+            )
+            .and_then(|_|
+                self.conn.execute(init_tables.predefined_tags_pattern_to_tags.as_str(),[],),
+            )
+            .map_err(|err| anyhow::anyhow!(err))
     }
 
     fn insert_activities(&mut self, banking_activites: &[AccountActivity]) -> anyhow::Result<usize> {
@@ -240,6 +213,48 @@ impl DBActions for SqliteDB {
         Ok(stats)
     }
 
+    fn get_stats_detailed_amount_per_month(&self, tags: &[String]) -> anyhow::Result<Vec<StatsDetailedAmountPerMonthByTag>> {
+        let inner_where_clause = tags
+            .iter()
+            .map(|_| " tag = ?")
+            .join(" or ");
+
+        let where_clause = tags
+            .iter()
+            .map(|_| " tag <> ?")
+            .join(" or ");
+
+        let sql = format!("
+       SELECT t.tag, ABS(a.amount), cast(strftime('%m', a.date) as integer), cast(strftime('%Y%m', a.date) as integer)
+       FROM activities a
+       LEFT JOIN activities_tags at ON at.activity_id = a.rowid
+       LEFT JOIN tags_pattern_to_tags tptt ON tptt.tags_pattern_id = at.tags_pattern_id
+       LEFT JOIN tags t ON tptt.tags_id = t.id
+       WHERE at.tags_pattern_id in (
+           select distinct(tptt.tags_pattern_id)
+           from tags_pattern_to_tags tptt
+           left join tags t on tptt.tags_id = t.id
+           where {}
+           group by tptt.tags_pattern_id
+       ) and {}
+       ORDER BY date ASC 
+        ", inner_where_clause, where_clause) ;
+
+        let mut stmt = self.conn.prepare(&sql)?;
+        let tags = [tags,tags].concat();
+        let mut rows = stmt.query(params_from_iter(tags))?;
+        let mut stats = Vec::new();
+        while let Some(row) = rows.next()? {
+            stats.push(StatsDetailedAmountPerMonthByTag {
+                tag: row.get(0)?,
+                amount: row.get(1).map(|e| OrderedFloat(e))?,
+                month: row.get(2)?,
+                month_year: row.get(3)?
+            });
+        }    
+        Ok(stats)
+    }
+
 }
 
 
@@ -254,7 +269,7 @@ mod tests {
 
     fn create_db() -> anyhow::Result<SqliteDB> {
         let connection = in_memory()?;
-        Ok(SqliteDB { conn : connection })
+        Ok(SqliteDB { conn : connection, init_db_path : Some("./data/init-db-test.toml".to_string()) })
     }
 
     #[test]

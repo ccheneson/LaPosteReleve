@@ -5,17 +5,13 @@ type TagPatternJson = {
     tags: string[]
 }
 
+type TagPatternProps = {
+    patterns : TagPatternJson[]
+}
 
-const TagPatternList = () => {
+const TagPatternList = (props: TagPatternProps) => {
 
-    let [tagPatterns, setTagPatterns] = useState<TagPatternJson[] | undefined>(undefined)
-
-    useEffect(() => {
-        fetch("http://localhost:3030/api/tags/pattern", { mode: 'cors'})
-            .then(response => response.json())
-            .then(data => setTagPatterns(data))
-    }, [])
-
+    const [tagPatterns, setTagPatterns] = useState<TagPatternJson[]>(props.patterns)
 
     return (
         <div>
