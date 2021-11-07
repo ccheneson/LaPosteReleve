@@ -9,7 +9,7 @@ pub fn list_files<P: AsRef<Path>>(
     extension: Option<&str>,
 ) -> anyhow::Result<Vec<PathBuf>> {
     let mut csv: Vec<PathBuf> = vec![];
-    for file in std::fs::read_dir(file_path)? {
+    for file in std::fs::read_dir(file_path.as_ref())? {
         let f_path = file?.path();
         if extension.is_some() {
             match f_path.extension() {

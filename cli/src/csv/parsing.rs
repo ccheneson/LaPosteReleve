@@ -36,7 +36,7 @@ pub fn parse_csv<P: AsRef<Path>>(csv_path: P) -> anyhow::Result<BankingStatement
     let mut reader = csv::ReaderBuilder::new()
         .flexible(true)
         .delimiter(b';')
-        .from_path(csv_path)?;        
+        .from_path(csv_path.as_ref())?;        
 
     let data = reader.records()
         .filter(|s| s.is_ok())
