@@ -18,7 +18,7 @@ pub mod sqlite_connections {
 
    
     pub fn from_file<P : AsRef<Path>>(file_db: P) -> anyhow::Result<Connection> {
-        Connection::open_with_flags(file_db, OpenFlags::default())
+        Connection::open_with_flags(file_db.as_ref(), OpenFlags::default())
         .map_err(|err| anyhow::anyhow!(err))
     }
 }

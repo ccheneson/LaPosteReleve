@@ -10,7 +10,7 @@ use crate::db::ArcMutDB;
 pub fn csv2db<T: DBActions, P: AsRef<Path>>(dir_path: P, arc_db : ArcMutDB<T>) -> anyhow::Result<()> {
     //-----  Get all csv statements ------------
     let statement_files = list_files(
-        dir_path, 
+        dir_path.as_ref(), 
         Some("csv")
     )?;
 
