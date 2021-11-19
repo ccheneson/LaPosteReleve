@@ -1,42 +1,68 @@
+use std::path::Path;
+
 use itertools::Itertools;
 use ordered_float::OrderedFloat;
-use rusqlite::{Connection, named_params,params_from_iter};
-use crate::models::{AccountActivity, AccountBalance, StatsAmountPerMonthByTag, StatsDetailedAmountPerMonthByTag, tagging::{ActivityToTags, TagsPattern}};
-use serde::{Serialize, Deserialize};
-use super::DBActions;
+use rusqlite::{Connection, OpenFlags, named_params, params_from_iter};
+use crate::{db::InitTables, models::{AccountActivity, AccountBalance, StatsAmountPerMonthByTag, StatsDetailedAmountPerMonthByTag, tagging::{ActivityToTags, TagsPattern}}};
+use super::{DBActions, DBConfig};
 
 
 pub struct SqliteDB {
-    pub conn: Connection,
+    conn: Connection,
     init_db_path: Option<String>,
 }
 
-
-#[derive(Default, Debug, Serialize, Deserialize)]
-struct InitTables {
-    table_activities: String,
-    table_balance: String,
-    table_tags: String,
-    table_tags_pattern: String,
-    table_tags_pattern_to_tags: String,
-    table_activities_tags: String,
-    predefined_tags: String,
-    predefined_tags_pattern: String,
-    predefined_tags_pattern_to_tags: String
-}
-
 impl SqliteDB {
-    pub fn new(conn: Connection, init_db_path: Option<String>) -> Self {        
-        Self { conn, init_db_path }
+
+    fn from_file<P: AsRef<Path>>(file_db: P) -> Self {
+        let conn = 
+            Connection::open_with_flags(
+                                        file_db.as_ref(), 
+                                        OpenFlags::default()
+            )
+            .map_err(|err| anyhow::anyhow!(err))
+            .expect("Can not create DB as a file");
+        Self {
+            conn, init_db_path : None
+        }
     }
+
+    fn from_memory() -> Self {
+        let conn = 
+            Connection::open_in_memory()
+            .map_err(|err| anyhow::anyhow!(err))
+            .expect("Can not create DB in memory");
+        Self {
+            conn, init_db_path : None
+        }
+    }
+
+    pub fn with_init_db_script(mut self, init_db_path: String) -> Self {
+        self.init_db_path = Some(init_db_path);
+        self
+    }
+
 
     #[allow(unused)]
     pub fn close_cnx(self) -> anyhow::Result<()> {
         self.conn.close().map_err(|err| anyhow::anyhow!(err.1))
     }
+
+    #[cfg(test)]
+    pub fn connection(&self) -> &Connection {
+        &self.conn
+    }
 }
 
 impl DBActions for SqliteDB {
+
+    fn from_config(conf: DBConfig) -> Self {
+        match conf {
+            DBConfig::File{ file_name } => SqliteDB::from_file(file_name),
+            DBConfig::Memory => SqliteDB::from_memory(),
+            DBConfig::RDBMS { .. } => unimplemented!("Not implemented for RDBMS yet")
+        }
+    }
     
     fn create_table(&self) -> anyhow::Result<usize> {
         let init_db_script = self.init_db_path.as_ref().ok_or(anyhow::anyhow!("Missing DB int script path"))?;
@@ -262,14 +288,15 @@ impl DBActions for SqliteDB {
 #[cfg(test)]
 mod tests {
 
-    use crate::{db::{DBActions, sqlite::SqliteDB}, models::{AccountActivity, AccountBalance, tagging::TagsPattern}};
+    use crate::{db::{DBActions, DBConfig, sqlite::SqliteDB}, models::{AccountActivity, AccountBalance, tagging::TagsPattern}};
     use ordered_float::OrderedFloat;
     use chrono::NaiveDate;
-    use crate::db::tests::sqlite_connections::in_memory;
 
     fn create_db() -> anyhow::Result<SqliteDB> {
-        let connection = in_memory()?;
-        Ok(SqliteDB { conn : connection, init_db_path : Some("./data/init-db-test.toml".to_string()) })
+        Ok(
+            SqliteDB::from_config(DBConfig::Memory)
+            .with_init_db_script("./data/init-db-test.toml".to_string())
+        )
     }
 
     #[test]

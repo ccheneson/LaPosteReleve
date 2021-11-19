@@ -4,16 +4,9 @@ mod db;
 mod errors;
 mod models;
 
-use crate::{
-    actions::tagging::tagging,
-    db::{
-        sqlite::SqliteDB,
-        sqlite_connections::{self, remove_db_if_exist},
-    },
-};
+use crate::{actions::tagging::tagging, db::{DBActions, sqlite::SqliteDB, sqlite_connections::remove_db_if_exist}};
 use actions::csv2db::csv2db;
 use actions::http::http_server;
-use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
 use std::{
     env,
@@ -37,21 +30,26 @@ async fn main() -> anyhow::Result<()> {
     let cfg: AppConfig = confy::load_path("./config.toml")?;
     let db_path = cfg.db_path.as_str();
 
-    let arc_db = |conn: Connection, init_db_path: Option<String>| {
-        let sqlite_db = SqliteDB::new(conn, init_db_path);
+    let arc_db = |db_path: String, init_db_path: Option<String>| {
+        let sqlite_db = match init_db_path {
+            Some(init_path) => 
+                SqliteDB::from_config(db::DBConfig::File { file_name : db_path })
+                .with_init_db_script(init_path),
+            None => 
+                SqliteDB::from_config(db::DBConfig::File { file_name : db_path })
+        };
+        
         Arc::new(Mutex::new(sqlite_db))
     };
 
     match switch {
         Some("--http") => {
-            let conn = sqlite_connections::from_file(db_path)?;
-            let arc_db = arc_db(conn, None);
+            let arc_db = arc_db(cfg.db_path, None);
             http_server(cfg.root_www, cfg.port_www, arc_db).await
         }
         Some("--db") => {
             remove_db_if_exist(db_path)?;
-            let conn = sqlite_connections::from_file(db_path)?;
-            let arc_db = arc_db(conn, Some(cfg.init_db_path));
+            let arc_db = arc_db(cfg.db_path, Some(cfg.init_db_path));
             csv2db(cfg.csv_source, arc_db.clone())?;
             tagging(arc_db).map(|_| ())
         }

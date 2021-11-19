@@ -29,20 +29,23 @@ pub fn tagging<T: DBActions>(arc_db : ArcMutDB<T>) -> anyhow::Result<usize> {
 
 #[test]
 fn test() -> anyhow::Result<()> {
-    use crate::db::tests::sqlite_connections::in_memory;
     use std::sync::{Arc, Mutex};
     use crate::actions::csv2db::csv2db;    
     use crate::db::sqlite::SqliteDB;
+    use crate::db::DBConfig;
+    
 
-    let conn = in_memory()?;
-    let sqlite_db = SqliteDB::new(conn, Some("./data/init-db-test.toml".to_string()));
+    let sqlite_db = 
+        SqliteDB::from_config(DBConfig::Memory)
+        .with_init_db_script("./data/init-db-test.toml".to_string());
 
     let arc_db = Arc::new(Mutex::new(sqlite_db));
     csv2db("./data/", arc_db.clone())?;
     tagging(arc_db.clone())?;
 
     let db = arc_db.lock().unwrap();
-    let check_query: usize = db.conn
+    
+    let check_query: usize = db.connection()
         .query_row("
             select count(1)
             from activities a

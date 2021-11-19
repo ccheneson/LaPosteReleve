@@ -1,13 +1,13 @@
 pub mod sqlite;
-
+use serde::{Serialize, Deserialize};
 use std::sync::{Arc, Mutex};
 use crate::models::{AccountActivity, AccountBalance, StatsAmountPerMonthByTag, StatsDetailedAmountPerMonthByTag, tagging::{ActivityToTags, TagsPattern}};
-pub type ArcMutDB<T> = Arc<Mutex<T>>;
 
+
+pub type ArcMutDB<T> = Arc<Mutex<T>>;
 
 pub mod sqlite_connections {
     use std::path::Path;
-    use rusqlite::{Connection, OpenFlags};
 
     pub fn remove_db_if_exist<P: AsRef<Path>>(db_path : P) -> Result<(), anyhow::Error> {  
         if db_path.as_ref().exists() {
@@ -16,15 +16,21 @@ pub mod sqlite_connections {
         Ok(())
     }
 
-   
-    pub fn from_file<P : AsRef<Path>>(file_db: P) -> anyhow::Result<Connection> {
-        Connection::open_with_flags(file_db.as_ref(), OpenFlags::default())
-        .map_err(|err| anyhow::anyhow!(err))
+}
+
+#[allow(unused)]
+pub enum DBConfig {
+    File { file_name: String },
+    Memory,
+    RDBMS {
+        user: String,
+        password: String,
+        url: String   
     }
 }
 
-
 pub trait DBActions {
+    fn from_config(conf: DBConfig) -> Self;
     fn create_table(&self) -> anyhow::Result<usize>;
     fn insert_activities(&mut self,banking_statement: &[AccountActivity]) -> anyhow::Result<usize>;
     fn insert_balance(&self,balance: AccountBalance) -> anyhow::Result<usize>;
@@ -38,16 +44,15 @@ pub trait DBActions {
 
 
 
-#[cfg(test)]
-pub mod tests {
-
-    pub mod sqlite_connections {
-        use rusqlite::Connection;
-    
-        pub fn in_memory() -> anyhow::Result<Connection> {
-            Connection::open_in_memory()
-            .map_err(|err| anyhow::anyhow!(err))        
-        }
-    }
-    
+#[derive(Default, Debug, Serialize, Deserialize)]
+struct InitTables {
+    table_activities: String,
+    table_balance: String,
+    table_tags: String,
+    table_tags_pattern: String,
+    table_tags_pattern_to_tags: String,
+    table_activities_tags: String,
+    predefined_tags: String,
+    predefined_tags_pattern: String,
+    predefined_tags_pattern_to_tags: String
 }
