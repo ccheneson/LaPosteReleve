@@ -11,7 +11,7 @@ pub type ArcMutDB<T> = Arc<Mutex<T>>;
 pub mod utils {
     use std::path::Path;
 
-    pub fn remove_db_if_exist<P: AsRef<Path>>(db_path : P) -> Result<(), anyhow::Error> {  
+    pub fn remove_db_if_exist<P: AsRef<Path>>(db_path : P) -> Result<(), anyhow::Error> {
         if db_path.as_ref().exists() {
             std::fs::remove_file(db_path)?;
         }
@@ -22,7 +22,8 @@ pub mod utils {
 
 #[allow(unused)]
 pub enum DBConfig {
-    File { file_name: String },
+    File { file_name: String},
+    FileWithOverwrite { file_name: String},
     Memory,
     RDBMS {
         user: String,

@@ -3,7 +3,6 @@ use super::handlers::get_tags_pattern;
 use crate::actions::handlers::{get_activities, get_balance, get_stats_tag_per_month, get_tags};
 use crate::db::ArcMutDB;
 use crate::db::DBActions;
-use std::sync::Arc;
 use tracing::Level;
 use tracing_subscriber::FmtSubscriber;
 use warp::hyper::Method;

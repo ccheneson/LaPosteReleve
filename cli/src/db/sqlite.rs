@@ -50,11 +50,11 @@ impl SqliteDB {
 
 impl DBActions for SqliteDB {
 
+
     fn clean_db(&self) -> anyhow::Result<()> {
-        match self.conn.path() {
-            Some(p) => remove_db_if_exist(p),
-            None => Ok(())
-        }
+        // For Sqlite, cleaning is just about deleting the file
+        // and is done when creating the struct cf DBConfig::FileWithOverwrite
+        Ok(())
     }
 
     fn with_init_db_script(mut self, init_db_path: String) -> Self {
@@ -65,6 +65,10 @@ impl DBActions for SqliteDB {
     fn from_config(conf: DBConfig) -> Self {
         match conf {
             DBConfig::File{ file_name } => SqliteDB::from_file(file_name),
+            DBConfig::FileWithOverwrite{ file_name } => {
+                remove_db_if_exist(&file_name).expect("Fail when trying to delete the DB file");
+                SqliteDB::from_file(file_name)
+            },
             DBConfig::Memory => SqliteDB::from_memory(),
             DBConfig::RDBMS { .. } => unimplemented!("Not implemented for RDBMS")
         }
@@ -73,34 +77,26 @@ impl DBActions for SqliteDB {
     fn create_table(&self) -> anyhow::Result<usize> {
         let init_db_script = self.init_db_path.as_ref().ok_or(anyhow::anyhow!("Missing DB int script path"))?;
         let init_tables: InitTables = confy::load_path(init_db_script.as_str())?;
+        let scripts = vec!(
+            init_tables.table_activities.as_str(),
+            init_tables.table_balance.as_str(),
+            init_tables.table_tags.as_str(),
+            init_tables.table_tags_pattern.as_str(),
+            init_tables.table_tags_pattern_to_tags.as_str(),
+            init_tables.table_activities_tags.as_str(),
+            init_tables.predefined_tags.as_str(),
+            init_tables.predefined_tags_pattern.as_str(),
+            init_tables.predefined_tags_pattern_to_tags.as_str()
+        );
 
-        self.conn
-            .execute(init_tables.table_activities.as_str(),[],)
-            .and_then(|_|
-                self.conn.execute(init_tables.table_balance.as_str(),[],)
-            )
-            .and_then(|_|
-                self.conn.execute(init_tables.table_tags.as_str(),[],)
-            )
-            .and_then(|_|
-                self.conn.execute(init_tables.table_tags_pattern.as_str(),[],)
-            )
-            .and_then(|_|
-                self.conn.execute(init_tables.table_tags_pattern_to_tags.as_str(),[],)
-            )
-            .and_then(|_|
-                self.conn.execute(init_tables.table_activities_tags.as_str(),[],),
-            )
-            .and_then(|_|
-                self.conn.execute(init_tables.predefined_tags.as_str(),[],),
-            )
-            .and_then(|_|
-                self.conn.execute(init_tables.predefined_tags_pattern.as_str(),[],),
-            )
-            .and_then(|_|
-                self.conn.execute(init_tables.predefined_tags_pattern_to_tags.as_str(),[],),
-            )
-            .map_err(|err| anyhow::anyhow!(err))
+        let mut update = 0 as usize;
+        for script in scripts {
+            let n = self.conn.execute(script,[],)
+            .map_err(|err| anyhow::anyhow!("Fail executing init db script : {:?}", err))?;
+            update += n;
+        }
+
+        Ok(update)        
     }
 
     fn insert_activities(&mut self, banking_activites: &[AccountActivity]) -> anyhow::Result<usize> {

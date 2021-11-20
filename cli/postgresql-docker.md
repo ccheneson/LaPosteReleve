@@ -18,5 +18,4 @@ The default `postgres` user and database are created in the entrypoint with `ini
 
 https://stackoverflow.com/questions/26343178/dockerizing-postgresql-psql-connection-refused/26344405
 
-
-
+Port : 5432
