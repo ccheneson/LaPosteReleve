@@ -4,7 +4,7 @@ use itertools::Itertools;
 use ordered_float::OrderedFloat;
 use rusqlite::{Connection, OpenFlags, named_params, params_from_iter};
 use crate::{db::InitTables, models::{AccountActivity, AccountBalance, StatsAmountPerMonthByTag, StatsDetailedAmountPerMonthByTag, tagging::{ActivityToTags, TagsPattern}}};
-use super::{DBActions, DBConfig};
+use super::{DBActions, DBConfig, utils::remove_db_if_exist};
 
 
 pub struct SqliteDB {
@@ -37,12 +37,6 @@ impl SqliteDB {
         }
     }
 
-    pub fn with_init_db_script(mut self, init_db_path: String) -> Self {
-        self.init_db_path = Some(init_db_path);
-        self
-    }
-
-
     #[allow(unused)]
     pub fn close_cnx(self) -> anyhow::Result<()> {
         self.conn.close().map_err(|err| anyhow::anyhow!(err.1))
@@ -56,11 +50,23 @@ impl SqliteDB {
 
 impl DBActions for SqliteDB {
 
+    fn clean_db(&self) -> anyhow::Result<()> {
+        match self.conn.path() {
+            Some(p) => remove_db_if_exist(p),
+            None => Ok(())
+        }
+    }
+
+    fn with_init_db_script(mut self, init_db_path: String) -> Self {
+        self.init_db_path = Some(init_db_path);
+        self
+    }
+
     fn from_config(conf: DBConfig) -> Self {
         match conf {
             DBConfig::File{ file_name } => SqliteDB::from_file(file_name),
             DBConfig::Memory => SqliteDB::from_memory(),
-            DBConfig::RDBMS { .. } => unimplemented!("Not implemented for RDBMS yet")
+            DBConfig::RDBMS { .. } => unimplemented!("Not implemented for RDBMS")
         }
     }
     

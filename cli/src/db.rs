@@ -1,4 +1,6 @@
 pub mod sqlite;
+pub mod postgres;
+
 use serde::{Serialize, Deserialize};
 use std::sync::{Arc, Mutex};
 use crate::models::{AccountActivity, AccountBalance, StatsAmountPerMonthByTag, StatsDetailedAmountPerMonthByTag, tagging::{ActivityToTags, TagsPattern}};
@@ -6,7 +8,7 @@ use crate::models::{AccountActivity, AccountBalance, StatsAmountPerMonthByTag, S
 
 pub type ArcMutDB<T> = Arc<Mutex<T>>;
 
-pub mod sqlite_connections {
+pub mod utils {
     use std::path::Path;
 
     pub fn remove_db_if_exist<P: AsRef<Path>>(db_path : P) -> Result<(), anyhow::Error> {  
@@ -30,6 +32,8 @@ pub enum DBConfig {
 }
 
 pub trait DBActions {
+    fn with_init_db_script(self, init_db_path: String) -> Self;
+    fn clean_db(&self) -> anyhow::Result<()>;
     fn from_config(conf: DBConfig) -> Self;
     fn create_table(&self) -> anyhow::Result<usize>;
     fn insert_activities(&mut self,banking_statement: &[AccountActivity]) -> anyhow::Result<usize>;
