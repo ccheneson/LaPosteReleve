@@ -1,14 +1,10 @@
-#[macro_use]
-extern crate diesel;
-
 mod actions;
 mod csv;
 mod db;
 mod errors;
 mod models;
-mod lib;
 
-use crate::{actions::tagging::tagging, db::{DBActions, sqlite::SqliteDB, utils::remove_db_if_exist}};
+use crate::{actions::tagging::tagging, db::{DBActions, sqlite::SqliteDB}};
 use actions::csv2db::csv2db;
 use actions::http::http_server;
 use serde::{Deserialize, Serialize};

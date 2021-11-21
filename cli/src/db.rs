@@ -1,5 +1,4 @@
 pub mod sqlite;
-pub mod postgres;
 
 use serde::{Serialize, Deserialize};
 use std::sync::{Arc, Mutex};
