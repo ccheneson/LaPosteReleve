@@ -17,6 +17,8 @@ It uses:
 * React (react-chartjs-2)
 * sqlite
 
+There is also [branch](https://github.com/ccheneson/LaPosteReleve/tree/WITH_POSTGRES) where I have implemented most of the DB actions for postgres + diesel
+
 # Build
 
 * To build the database, go to the `cli` folder and run
