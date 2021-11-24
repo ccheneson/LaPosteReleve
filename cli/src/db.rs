@@ -1,7 +1,8 @@
 pub mod sqlite;
+pub mod postgres;
 
 use serde::{Serialize, Deserialize};
-use std::sync::{Arc, Mutex};
+use std::{fmt::Display, sync::{Arc, Mutex}};
 use crate::models::{AccountActivity, AccountBalance, StatsAmountPerMonthByTag, StatsDetailedAmountPerMonthByTag, tagging::{ActivityToTags, TagsPattern}};
 
 
@@ -25,9 +26,35 @@ pub enum DBConfig {
     FileWithOverwrite { file_name: String},
     Memory,
     RDBMS {
-        user: String,
-        password: String,
-        url: String   
+        url: Option<String>
+    }
+}
+
+impl DBConfig {
+    #[allow(unused)]
+    pub fn rdbms_with_url(url: String) -> Self {
+        Self::RDBMS {
+            url: Some(url)
+        }
+    }
+
+    #[allow(unused)]
+    pub fn rdbms() -> Self {
+        Self::RDBMS {
+            url: None
+        }
+    }
+}
+
+impl Display for DBConfig {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match *self {
+            DBConfig::Memory { .. } => write!(f, "DBConfig::Memory"),
+            DBConfig::RDBMS { .. } => write!(f, "DBConfig::RDBMS"),
+            DBConfig::File { .. } => write!(f, "DBConfig::File"),
+            DBConfig::FileWithOverwrite { .. } => write!(f, "DBConfig::FileWithOverwrite")
+        }
+        
     }
 }
 

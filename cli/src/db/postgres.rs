@@ -1,156 +1,21 @@
+#[allow(unused)]
 use std::env;
-
 use chrono::NaiveDate;
-use diesel::{Connection, PgConnection, QueryDsl, QueryResult, query_dsl::methods::FilterDsl};
-use crate::{db::postgres::postgres_models::{Activity, ActivityTag, ActivityTagWithId, ActivityWithId, Balance, TagsPattern, TagsPatternToTag}, models::*};
+use diesel::{Connection, NullableExpressionMethods, PgConnection, QueryDsl, QueryResult};
+use ordered_float::OrderedFloat;
+use crate::{db_schema::{Activity, ActivityTag, Balance, BalanceWithId}, models::{AccountActivity, AccountBalance, StatsAmountPerMonthByTag, StatsDetailedAmountPerMonthByTag, tagging}};
 use super::{DBActions, DBConfig};
 use crate::diesel::RunQueryDsl; // Needed for .execute 
-use crate::diesel::BelongingToDsl; // Needed for .belonging_to 
-
-
-pub(crate) mod postgres_models {
-    use diesel::Insertable;
-
-    pub(crate) mod schema {       
-        table! {
-            activities {
-                id -> Integer,
-                date -> Date,
-                statement -> Text,
-                amount -> Float4,
-            }
-        }
-        table! {
-            balances {
-                id -> Integer,
-                date -> Date,
-                amount -> Float4,
-            }
-        }
-        table! {
-            tags {
-                id -> Integer,
-                tag -> Text,
-            }
-        }
-        table! {
-            tags_patterns {
-                id -> Integer,
-                tags_pattern -> Text,
-            }
-        }
-        table! {
-            tags_pattern_to_tags {
-                id -> Integer,
-                tags_pattern_id -> Integer,
-                tags_id -> Integer,
-            }
-        }
-        table! {
-            activity_tags {
-                id -> Integer,
-                activity_id -> Integer,
-                tags_pattern_id -> Integer,
-            }
-        }
-
-        
-
-        joinable!(tags_pattern_to_tags -> activity_tags(tags_pattern_id));
-        allow_tables_to_appear_in_same_query!(tags_pattern_to_tags, activity_tags);
-        
-
-
-    }
-
-    use self::schema::*;
-    use chrono::NaiveDate;
-
-
-    #[derive(Insertable, Debug)]
-    #[table_name="activities"]
-    pub struct Activity {
-        pub date: NaiveDate,
-        pub statement: String,
-        pub amount: f32,
-    }
-
-    #[derive(Identifiable, Queryable, Debug)]
-    #[table_name="activities"]
-    pub struct ActivityWithId {
-        pub id: i32,
-        pub date: NaiveDate,
-        pub statement: String,
-        pub amount: f32,
-    }
-    
-    #[derive(Queryable, Insertable)]
-    pub struct Balance {
-        pub date: NaiveDate,
-        pub amount: f32,
-    }
-
-    #[derive(Queryable, Insertable)]
-    #[table_name="balances"]
-    pub struct BalanceWithId {
-        pub id: i32,
-        pub date: NaiveDate,
-        pub amount: f32,
-    }
-
-
-
-    #[derive(Queryable, Associations, Debug)]
-    #[table_name="tags_patterns"]
-    pub struct TagsPattern {
-        pub id: i32,
-        pub tags_pattern: String,
-    }
-
-    #[derive(Queryable, Debug, Associations, Identifiable)]
-    #[belongs_to(ActivityTagWithId, foreign_key="tags_pattern_id")]
-    pub struct TagsPatternToTag {
-        pub id: i32,
-        pub tags_pattern_id: i32,
-        pub tags_id: i32,
-    }
-
-    #[derive(Queryable)]
-    pub struct Tag {
-        pub id: i32,
-        pub tag: String,
-    }
-
-
-    //#[belongs_to(parent = ActivityWithId, foreign_key="activity_id")]
-    #[derive(Identifiable, Queryable, PartialEq, Associations, Debug)]
-    #[belongs_to(ActivityWithId, foreign_key="activity_id")]
-    #[table_name="activity_tags"]    
-    pub struct ActivityTagWithId {
-        pub id: i32,
-        pub activity_id: i32,
-        pub tags_pattern_id: i32,
-    }
-
-    #[derive(Insertable)]
-    #[table_name="activity_tags"]
-    pub struct ActivityTag {
-        pub activity_id: i32,
-        pub tags_pattern_id: i32,
-    }
-
-}
+use diesel::prelude::*; //for .on and .eq in left_join(....on(...))
 
 
 pub(crate) mod converters {
     use std::borrow::Borrow;
 
-    use ordered_float::OrderedFloat;
-
+    use crate::db_schema::{Activity, ActivityTag, Balance};
     use crate::models::{AccountActivity, AccountBalance};
     use crate::models::tagging::ActivityToTags;
     
-    use super::postgres_models::*;
 
     impl<T: Borrow<AccountActivity>> From<T> for Activity {
         fn from(a: T) -> Self {
@@ -179,19 +44,6 @@ pub(crate) mod converters {
             }
         }
     }
-
-    impl From<ActivityWithId> for AccountActivity {
-        fn from(a: ActivityWithId) -> Self {
-            // Self {
-            //     row_id: Some(a.id as u32),
-            //     date: a.date,
-            //     statement: a.statement,
-            //     amount : a.amount,
-            //     tag_pattern_id: unimplemented!("")
-            // }
-            unimplemented!("")
-        }
-    }
     
 }
 
@@ -201,11 +53,13 @@ pub struct Postgres {
 
 impl DBActions for Postgres {
     fn clean_db(&self) -> anyhow::Result<()> {
-        unimplemented!("Cleaning DB is done from Diesel DB migration commands")
+        println!("Cleaning DB is done from Diesel DB migration commands");
+        Ok(())
     }
 
     fn with_init_db_script(self, _: String) -> Self {
-        unimplemented!("with_init_db_script: Init DB is done from Diesel DB migration commands")
+        println!("with_init_db_script: Init DB is done from Diesel DB migration commands");
+        self
     }
 
     fn from_config(conf: DBConfig) -> Self {
@@ -224,102 +78,108 @@ impl DBActions for Postgres {
     }
 
     fn create_table(&self) -> anyhow::Result<usize> {
-        unimplemented!("create_table: Init DB is done from Diesel DB migration commands")
+        println!("create_table: Init DB is done from Diesel DB migration commands");
+        Ok(0)
     }
 
-    fn insert_activities(
-        &mut self,
-        banking_statement: &[AccountActivity],
-    ) -> anyhow::Result<usize> {
+    fn insert_activities(&mut self,banking_statement: &[AccountActivity]) -> anyhow::Result<usize> {
 
-        use postgres_models::schema::activities;
+        use crate::db_schema::activities;
         
         let converted: Vec<Activity> = banking_statement.into_iter().map(|a| a.into()).collect();
 
-        let result: QueryResult<usize> = diesel::insert_into(activities::table).values(converted).execute(&self.conn);         
+        let result: QueryResult<usize> = diesel::insert_into(activities::table)
+            .values(converted)
+            .on_conflict((activities::date, activities::statement, activities::amount))
+            .do_nothing()
+            .execute(&self.conn);         
 
         result.map_err(|err| anyhow::anyhow!(err))
     }
 
     fn insert_balance(&self, balance: AccountBalance) -> anyhow::Result<usize> {
-        use postgres_models::schema::balances;
+        use crate::db_schema::balances;
         
         let converted: Balance = balance.into();
 
-        let result: QueryResult<usize> = diesel::insert_into(balances::table).values(&converted).execute(&self.conn);         
+        let result: QueryResult<usize> = diesel::insert_into(balances::table)
+            .values(&converted)
+            .on_conflict((balances::date, balances::amount))
+            .do_nothing()
+            .execute(&self.conn);         
 
         result.map_err(|err| anyhow::anyhow!(err))
     }
 
     fn get_activities(&self) -> anyhow::Result<Vec<AccountActivity>> {
-        use postgres_models::schema::activities::*;
-        use postgres_models::schema::activities;
-        use postgres_models::schema::tags_pattern_to_tags;
-        use postgres_models::schema::tags_pattern_to_tags::*;
-        use postgres_models::schema::activity_tags::*;
-        use postgres_models::schema::activity_tags;
+        use crate::db_schema::activities;
+        use crate::db_schema::activity_tags;
 
-
-        
-        
-        let activities: Vec<ActivityWithId>  = activities::table.select(activities::all_columns).load(&self.conn).unwrap();
-        let a = activities.get(0).unwrap();
-        
-        // let activity_tags:Vec<ActivityTagWithId> =                 
-        // ActivityTagWithId::belonging_to(&activities)        
-        //     .select(activity_tags::all_columns)
-        //     .load(&self.conn).unwrap();
-
-        // let activity_tags:Vec<TagsPatternToTag> =                 
-        //     ActivityTagWithId::belonging_to(&activities)
-        //         .inner_join(tags_pattern_to_tags::table)
-        //         .select(tags_pattern_to_tags::all_columns)
-        //         .load(&self.conn).unwrap();
-
-        //(i32,i32,i32),(i32,i32,i32)
-        let activity2_tags:Vec<(i32,i32,i32,i32,i32,i32)> =
-                ActivityTagWithId::belonging_to(&activities)
-                    .inner_join(tags_pattern_to_tags::table)
-                    .select((
-                        activity_tags::id, 
-                        activity_tags::activity_id, 
-                        activity_tags::tags_pattern_id, 
-                        tags_pattern_to_tags::id,
-                        tags_pattern_to_tags::tags_pattern_id,
-                        tags_pattern_to_tags::tags_id))
-                    .load(&self.conn).unwrap();
-
-
-
-            //tags_pattern_to_tags::table::select(self, selection)
-
-        //let tags_id:Vec<ActivityTagWithId> = TagsPattern::belonging_to(&activity_tags).load(&self.conn).unwrap();
-
-        println!("{:?}", activity2_tags);        
-        //println!("{:?}", activity_tags);
-
-        
-
-        Ok(vec!())
+        let activities = activities::table
+            .left_join(activity_tags::table.on(activity_tags::activity_id.eq(activities::id)))
+            .select((activities::id, activities::date, activities::statement, activities::amount, activity_tags::tags_pattern_id.nullable()))
+            .load::<(i32, NaiveDate, String , f32, Option<i32>)>(&self.conn)?
+            .into_iter()
+            .map(|r| AccountActivity {
+                row_id: Some(r.0 as u32),
+                date: r.1,
+                statement: r.2,
+                amount: OrderedFloat(r.3 as f64),
+                tag_pattern_id: r.4.map(|v| v as u8),
+            })
+            .collect();
+        Ok(activities)
     }
 
     fn get_balance(&self) -> anyhow::Result<AccountBalance> {
-        todo!()
+        use crate::db_schema::balances;
+
+        let balance = balances::table
+            .select(balances::all_columns)
+            .get_result::<BalanceWithId>(&self.conn)
+            .map(|r| AccountBalance {
+                row_id : Some(r.id as u32),
+                date : r.date,
+                balance_euro : OrderedFloat(r.amount as f64)
+            })?;
+        Ok(balance)
     }
 
     fn get_tag_patterns(&self) -> anyhow::Result<Vec<tagging::TagsPattern>> {
-        todo!()
+        use crate::db_schema::tags_patterns;
+        use crate::db_schema::tags_pattern_to_tags;        
+        use crate::db_schema::tags;
+
+        let result: Vec<tagging::TagsPattern> = tags_pattern_to_tags::table
+        .inner_join(tags_patterns::table.on(tags_patterns::id.eq(tags_pattern_to_tags::tags_pattern_id)))
+        .inner_join(tags::table.on(tags::id.eq(tags_pattern_to_tags::tags_id)))        
+        .select((tags_patterns::id, tags_patterns::tags_pattern, tags::tag))
+        .order_by(tags_patterns::id.asc())
+        .load::<(i32, String, String)>(&self.conn)?
+        .into_iter()
+        .map(|r| tagging::TagsPattern {
+            id: r.0 as u8,
+            pattern: r.1,
+            tag: r.2,
+        })
+        .collect();
+
+        Ok(result)
     }
 
     fn insert_activity_tags(
         &mut self,
         activity_tags: &[tagging::ActivityToTags],
     ) -> anyhow::Result<usize> {
-        use postgres_models::schema::activity_tags;
+        use crate::db_schema::activity_tags;
         
         let converted: Vec<ActivityTag> = activity_tags.into_iter().map(|a| a.into()).collect();
 
-        let result: QueryResult<usize> = diesel::insert_into(activity_tags::table).values(&converted).execute(&self.conn);         
+        let result: QueryResult<usize> = diesel::insert_into(activity_tags::table)
+            .values(&converted)
+            .on_conflict((activity_tags::activity_id, activity_tags::tags_pattern_id))
+            .do_nothing()
+            .execute(&self.conn);
 
         result.map_err(|err| anyhow::anyhow!(err))
     }
@@ -328,6 +188,21 @@ impl DBActions for Postgres {
         &self,
         tags: &[String],
     ) -> anyhow::Result<Vec<StatsAmountPerMonthByTag>> {
+        //use crate::db_schema::tags;
+        //use crate::db_schema::tags_pattern_to_tags;
+
+        // let result: Vec<i32> = tags_pattern_to_tags::table
+        //     .left_join(tags::table.on(tags::id.eq(tags_pattern_to_tags::tags_id)))
+        //     .group_by(tags_pattern_to_tags::tags_pattern_id)
+        //     .filter(tags::tag.eq("LOYER"))
+        //     .select(
+        //         tags_pattern_to_tags::tags_pattern_id
+        //     )            
+        //     .load(&self.conn)?;
+
+
+        // println!("{:?}", result);
+        
         todo!()
     }
 
