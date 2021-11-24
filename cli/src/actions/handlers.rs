@@ -15,7 +15,7 @@ use serde::Serialize;
 #[derive(Serialize)]
 struct BalanceWWW<'a> {
     date: &'a NaiveDate,
-    amount: &'a OrderedFloat<f64>,
+    amount: &'a OrderedFloat<f32>,
 }
 
 #[derive(Serialize)]
@@ -27,8 +27,8 @@ struct AccountActivityWWW {
 
 #[derive(Serialize)]
 struct AmountStatsWWW {
-    amount_plus: OrderedFloat<f64>,
-    amount_minus: OrderedFloat<f64>,
+    amount_plus: OrderedFloat<f32>,
+    amount_minus: OrderedFloat<f32>,
 }
 
 #[derive(Serialize)]
@@ -46,7 +46,7 @@ pub struct StatsDetailedAmountPerMonthByTagWWW<'a> {
 #[derive(Serialize)]
 pub struct StatsDetailedWWW<'a> {
     pub label: &'a str,
-    pub data: Vec<OrderedFloat<f64>>,
+    pub data: Vec<OrderedFloat<f32>>,
 }
 
 #[derive(Serialize, Debug)]
@@ -62,10 +62,10 @@ impl AmountStatsWWW {
             amount_minus: OrderedFloat(0.00),
         }
     }
-    fn add_to_amount_plus(&mut self, value: OrderedFloat<f64>) {
+    fn add_to_amount_plus(&mut self, value: OrderedFloat<f32>) {
         self.amount_plus = self.amount_plus + value;
     }
-    fn add_to_amount_minus(&mut self, value: OrderedFloat<f64>) {
+    fn add_to_amount_minus(&mut self, value: OrderedFloat<f32>) {
         self.amount_minus = self.amount_minus + value;
     }
 }

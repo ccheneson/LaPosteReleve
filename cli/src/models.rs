@@ -8,7 +8,7 @@ pub struct AccountActivity {
     pub row_id: Option<u32>,
     pub date: NaiveDate,
     pub statement: String,
-    pub amount: OrderedFloat<f64>,
+    pub amount: OrderedFloat<f32>,
     pub tag_pattern_id: Option<u8>,
 }
 
@@ -16,7 +16,7 @@ pub struct AccountActivity {
 pub struct AccountBalance {
     pub row_id: Option<u32>,
     pub date: NaiveDate,
-    pub balance_euro: OrderedFloat<f64>,
+    pub balance_euro: OrderedFloat<f32>,
 }
 
 #[derive(Debug)]
@@ -28,14 +28,14 @@ pub struct BankingStatement {
 
 #[derive(Serialize, Debug)]
 pub struct StatsAmountPerMonthByTag {
-    pub amount: OrderedFloat<f64>,
+    pub amount: OrderedFloat<f32>,
     pub month: u8
 }
 
 #[derive(Serialize, Eq, PartialEq, Hash)]
 pub struct StatsDetailedAmountPerMonthByTag {
     pub tag: String,
-    pub amount: OrderedFloat<f64>,
+    pub amount: OrderedFloat<f32>,
     pub month: u32,
     pub month_year: u32
 }

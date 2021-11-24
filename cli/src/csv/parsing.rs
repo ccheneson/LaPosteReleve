@@ -24,7 +24,7 @@ fn get_balance(stats: HashMap<String, String>) -> anyhow::Result<AccountBalance>
     Ok(AccountBalance{ 
         row_id: None,
         date : NaiveDate::parse_from_str(date.unwrap(), "%d/%m/%Y")? , 
-        balance_euro : balance.unwrap().replace(",", ".").parse::<OrderedFloat<f64>>()?
+        balance_euro : balance.unwrap().replace(",", ".").parse::<OrderedFloat<f32>>()?
     })
 }
 
@@ -66,7 +66,7 @@ pub fn parse_csv<P: AsRef<Path>>(csv_path: P) -> anyhow::Result<BankingStatement
                 (Some(date), Some(statement), Some(amount)) => {                    
                     let date = NaiveDate::parse_from_str(date.trim(), "%d/%m/%Y")?;
                     let statement = statement.trim();
-                    let amount = amount.replace(",", ".").parse::<f64>()?;
+                    let amount = amount.replace(",", ".").parse::<f32>()?;
 
                     activities.insert(AccountActivity {
                         row_id: None,
